@@ -24,7 +24,7 @@ const Landing = () => {
           loop
           muted
           playsInline
-          src="/Video_Playback_in_Infinity_Loop.mp4"
+          src="/InfinityLoopVideo.mp4"
           className="absolute inset-0 w-full h-full object-cover m-0 p-0 border-none"
           style={{ top: 0, left: 0, width: '100vw', height: '100vh' }}
         />
@@ -75,7 +75,7 @@ EduDiagno bridges the gap between students and recruiters with an AI-driven hiri
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
-              <Link to="/contact">
+              <Link to="/jobseeker/signup">
                 <Button
                   size="lg"
                   variant="outline"
@@ -87,7 +87,7 @@ EduDiagno bridges the gap between students and recruiters with an AI-driven hiri
                     boxShadow: '0 2px 8px rgba(209, 141, 209, 0.15)'
                   }}
                 >
-                  Request a Demo
+                  Students 
                 </Button>
               </Link>
             </div>
@@ -477,7 +477,7 @@ export default Landing; */}
             <div>
               <div className="text-6xl md:text-8xl font-extrabold mb-6 animate-fade-up [animation-delay:100ms]" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
               <h1 className="text-6xl md:text-8xl font-extrabold mb-6 animate-fade-up [animation-delay:100ms]" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
-              <span style={{fontFamily: 'Playfair Display, serif', fontWeight: 700, whiteSpace: 'normal'}}>For Company</span>
+              <span style={{fontFamily: 'Playfair Display, serif', fontWeight: 700, whiteSpace: 'normal'}}>For Recruiter</span>
             </h1>
               </div>
 
