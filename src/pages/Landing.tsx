@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import LandingLayout from "@/components/layout/RegularLayout";
 import { Button } from "@/components/ui/button";
@@ -86,117 +86,203 @@ const Typewriter: React.FC<{ text: string; speed?: number; pauseBefore?: number;
   );
 };
 
+// New 3D Aero Flip Testimonials (Windows 7 style Flip 3D inspiration)
+const Testimonials3D: React.FC = () => {
+  // Data
+  const testimonials = [
+  { img: '/Testimonials/Jaya Kumawat.jpeg', name: 'Jaya Kumawat', country: 'India', quote: 'The AI mock interviews were a game-changer for me! I used to get so nervous during real interviews, but practicing with EduDiagno AI platform felt incredibly realistic. It pinpointed exactly where I was fumbling and gave me the confidence to ace my interview with TechSolutions. I couldn\'t have done it without them!'},
+  { img: '/Testimonials/Luisine Hunanyan.jpeg', name: 'Luisine Hunanyan', country: 'Armenia', quote: 'What I loved most was the instant, detailed feedback after each mock interview. The AI analyzed everything from my answers to my body language. This personalized feedback helped me improve with every session. I walked into my final interview feeling prepared and self-assured. Thank you, EduDiagno AI!' },
+  { img: '/Testimonials/Precious Bassey.jpeg', name: 'Precious Bassey', country: 'Nigeria', quote: 'Honestly, I was skeptical about an AI interview platform at first, but it completely exceeded my expectations. It simulated the pressure of a real technical interview perfectly. By the time I interviewed with CodeCrafters, I had already practiced the toughest questions and knew how to structure my answers clearly and concisely.' },
+  { img: '/Testimonials/Shafali Awasthi.jpeg', name: 'Shafali Awasthi', country: 'India', quote: 'The journey from a nervous graduate to a confident intern at a top fintech company was made possible by EduDiagno AI. Their blend of AI-driven practice sessions and proactive placement support is the perfect formula for success. They helped me find a role that perfectly matched my skills and ambitions.' },
+  { img: '/Testimonials/Shreeya Maliye.jpeg', name: 'Shreeya Maliye', country: 'India', quote: 'As someone in a competitive field like Machine Learning, preparation is key. EduDiagno AI provided an extensive question bank and industry-specific interview scenarios that were incredibly relevant. The platform prepared me for the technical depth required and helped me land my dream internship at NextGen Analytics.' },
+  { img: '/Testimonials/Shubham Chaudhary.jpeg', name: 'Shubham Chaudhary', country: 'India', quote: 'EduDiagno AI is more than just an interview prep tool; it’s a complete career launchpad. The AI interviews helped me refine my storytelling and product sense, while the placement team worked tirelessly to find the right fit for me. I’m so grateful for their guidance and support!' },
+  { img: '/Testimonials/Rutuja Kale.jpeg', name: 'Rutuja Kale', country: 'India', quote: 'I struggled with articulating my thoughts under pressure. The repetitive practice with the AI interviewer on EduDiagno AI was crucial. It taught me to stay calm, listen carefully to the questions, and provide thoughtful responses. This skill was invaluable in securing my internship at HealthTech Innovations.' },
+  { img: '/Testimonials/Abderahim Benaissa.png', name: 'Abderahim Benaissa', country: 'Morocco', quote: 'EduDiagno AI\'s placement assistance is top-notch. They didn\'t just forward my resume; they helped me tailor it to the roles I was applying for. The team was super supportive and connected me with great opportunities, ultimately leading to my internship at Innovate Corp. It felt like I had a dedicated career coach in my corner.' },
+  ];
+
+  // State
+  // Simple active index (center card) for clarity
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const n = testimonials.length;
+
+  // Layout config
+  const MAX_SIDE = 2;          // show 2 on each side => 5 total
+  const X_STEP = 150;          // horizontal spread
+  const Z_STEP = 100;          // depth difference
+  const ANGLE = 15;            // tilt magnitude per side
+
+  useEffect(() => {
+    if (paused) return;
+    const id = window.setInterval(() => setActive(a => (a + 1) % n), 6000);
+    return () => clearInterval(id);
+  }, [paused, n]);
+
+  // Pointer (drag / swipe)
+  const dragStart = useRef<number | null>(null);
+  const dragLast = useRef<number | null>(null);
+  const dragging = useRef(false);
+  const SWIPE_PX = 45;
+  const pointerDown = (x: number) => { dragging.current = true; dragStart.current = x; dragLast.current = x; setPaused(true); };
+  const pointerMove = (x: number) => { if (!dragging.current) return; dragLast.current = x; };
+  const pointerUp = () => {
+    if (!dragging.current || dragStart.current == null || dragLast.current == null) { dragging.current = false; setPaused(false); return; }
+    const delta = dragLast.current - dragStart.current;
+    if (Math.abs(delta) > SWIPE_PX) {
+      // Swipe left -> go forward (next), swipe right -> previous (classic carousel expectation)
+      setActive(a => (a + (delta < 0 ? 1 : -1) + n) % n);
+    }
+    dragging.current = false; dragStart.current = null; dragLast.current = null; setPaused(false);
+  };
+
+  // Keyboard
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowRight') setActive(a => (a + 1) % n);
+    else if (e.key === 'ArrowLeft') setActive(a => (a - 1 + n) % n);
+    else if (e.key === 'Home') setActive(0);
+    else if (e.key === 'End') setActive(n - 1);
+  };
+
+  const ordered = testimonials.map((t, i) => ({ t, rel: ((i - active + n) % n) }));
+
+  return (
+  <section className="pt-10 pb-20 bg-muted/60" aria-labelledby="testimonials-3d-heading">
+      <div className="container mx-auto px-4">
+        <div className="text-center max-w-5xl mx-auto mb-1 relative z-10">
+          <h2 id="testimonials-3d-heading" className="text-6xl md:text-8xl font-extrabold mb-2 bg-gradient-to-r from-[#237be7] to-[#da4ada] bg-clip-text text-transparent leading-[1.05]">
+            <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700 }}>What Our Students & Recruiters Say</span>
+          </h2>
+          <p className="text-xl md:text-2xl text-black">Real stories from students and recruiters using EduDiagno.</p>
+        </div>
+
+  <div className="relative -mt-24 md:-mt-40 z-20" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+          {/* Stage */}
+          <div className="relative mx-auto w-full max-w-6xl h-[520px] md:h-[560px]" style={{ perspective: '1600px' }}>
+            <div
+              className="absolute inset-0"
+              role="list"
+              aria-roledescription="carousel"
+              aria-label="Testimonials Aero Flip stack"
+              tabIndex={0}
+              onKeyDown={onKeyDown}
+              onMouseDown={(e) => pointerDown(e.clientX)}
+              onMouseMove={(e) => pointerMove(e.clientX)}
+              onMouseUp={pointerUp}
+              onMouseLeave={pointerUp}
+              onTouchStart={(e) => pointerDown(e.touches[0].clientX)}
+              onTouchMove={(e) => pointerMove(e.touches[0].clientX)}
+              onTouchEnd={pointerUp}
+              aria-live="polite"
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+              {ordered.filter(o => {
+                // Keep items within +/- MAX_SIDE relative positions
+                const relIdx = (o.rel + n) % n; // 0..n-1
+                // Convert relIdx to signed distance (-k .. +k)
+                const dist = relIdx <= active ? relIdx - active : relIdx - active - n;
+                return Math.abs(dist) <= MAX_SIDE || relIdx === active;
+              }).map(({ t, rel }) => {
+                // Compute signed distance from active
+                let dist = ( (rel - active + n) % n );
+                // Normalize to signed range
+                if (dist > n/2) dist = dist - n;
+                const isFront = dist === 0;
+                const isNext = dist === 1; // upcoming card (second card)
+                const abs = Math.abs(dist);
+                const x = dist * X_STEP;
+                const z = -abs * Z_STEP;
+                const rotateY = dist * -ANGLE; // mirror tilt
+                const scale = 1 - abs * 0.07;
+                const opacity = 1 - abs * 0.22;
+                return (
+                  <figure
+                    key={t.name + dist}
+                    role="listitem"
+                    aria-label={`${t.name} from ${t.country}`}
+                    className={`absolute left-1/2 top-1/2 -translate-x-[70%] -translate-y-[78%] rounded-3xl bg-white/95 shadow-xl border border-white/40 flex flex-col p-8 md:p-10 w-[460px] md:w-[560px] h-[400px] md:h-[460px] transition-all duration-600 ease-[cubic-bezier(.22,.84,.32,1)] ${isFront ? 'ring-2 ring-brand/40 shadow-2xl' : 'hover:shadow-2xl'} cursor-pointer`}
+                    style={{
+                      transform: `translate3d(${x}px, 0, ${z}px) rotateY(${rotateY}deg) scale(${scale})`,
+                      opacity,
+                      zIndex: 100 - abs,
+                      willChange: 'transform'
+                    }}
+                    onClick={() => { if(!isFront){ setActive(tIdx => testimonials.findIndex(tt => tt.name === t.name)); } }}
+                  >
+                    {isNext && (
+                      <span className="absolute -top-3 left-6 select-none text-[10px] font-semibold tracking-wide bg-gradient-to-r from-brand/80 to-pink-500/80 text-white px-3 py-1 rounded-full shadow-sm backdrop-blur-sm border border-white/30">
+                        NEXT
+                      </span>
+                    )}
+                    <div className="flex items-center gap-6">
+                      <img src={t.img} alt="" aria-hidden className="w-20 h-20 md:w-25 md:h-25 rounded-full object-cover shadow-md" />
+                      <div>
+                        <h3 className="text-xl md:text-2xl font-semibold leading-snug">{t.name}</h3>
+                        <span className="text-[20px] tracking-wide uppercase text-muted-foreground">{t.country}</span>
+                      </div>
+                    </div>
+                    <blockquote className="mt-5 text-sm md:text-[18px] text-gray-700 leading-relaxed line-clamp-8">“{t.quote}”</blockquote>
+                  </figure>
+                );
+              })}
+            </div>
+          </div>
+
+          <p className="mt-6 text-center text-xs text-muted-foreground">Drag / swipe or use Arrow keys • Auto rotates</p>
+        </div>
+
+        <style>{`
+          @media (max-width: 640px){
+            /* Mobile fallback: flatten stack */
+            [aria-label='Testimonials Aero Flip stack'] figure { transform: none !important; position: relative !important; left:0; top:0; margin: 1rem auto; }
+            [aria-label='Testimonials Aero Flip stack'] { height: auto !important; }
+          }
+        `}</style>
+      </div>
+    </section>
+  );
+};
+
 const Landing = () => {
   return (
     <LandingLayout>
-      {/* Video background behind header and hero */}
-      <div className="fixed inset-0 w-screen h-screen -z-10 overflow-hidden">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          src="/InfinityLoopVideo.mp4"
-          className="absolute inset-0 w-full h-full object-cover m-0 p-0 border-none"
-          style={{ top: 0, left: 0, width: '100vw', height: '100vh' }}
-        />
-      </div>
-      <section className="relative min-h-screen w-screen flex items-center justify-center overflow-hidden p-0 m-0 border-none bg-muted/100">
-        {/* Large hero image with adjustable right->left white gradient overlay */}
-        <div style={{ position: 'relative', left: -180, top: 0, height: '100vh', zIndex: 2, display: 'block' }}>
-          <img
-            src="/Edudiagno Test.png"
-            alt="EduDiagno hero"
-            style={{ height: '100vh', width: 'auto', display: 'block' }}
-          />
-          {/* White gradient overlay: from right (white with adjustable opacity) to left (transparent) */}
-          <div
-            aria-hidden
-            style={{
-              position: 'absolute',
-              inset: 0,
-              right: 0,
-              top: 0,
-              height: '100%',
-              width: '100%',
-              pointerEvents: 'none',
-              background: `linear-gradient(to left, rgba(255,255,255, 1) 0%, rgba(255,255,255, 0) 100% )`
-            }}
-          />
-        </div>
-        {/* Overlay: right-half centered content */}
-        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-          <div className="w-1/2 h-full ml-auto flex flex-col items-center justify-center text-center px-6 md:px-12 lg:px-20 pointer-events-auto">
-            <h1
-              className="font-extrabold mb-6 animate-fade-up [animation-delay:100ms]"
-              style={{
-                fontSize: 'clamp(3rem, 7.5vw, 6.5rem)',
-                lineHeight: 1.12,
-                background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent'
-              }}
-            >
-              <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700 }}>EduDiagno</span>
-            </h1>
-            <h2
-              className="font-bold mb-6 animate-fade-up [animation-delay:200ms]"
-              style={{
-                fontSize: 'clamp(1.25rem, 3.5vw, 2.2rem)',
-                lineHeight: 1.08,
-                background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                fontFamily: 'Space Grotesk, sans-serif'
-              }}
-            >
-              Smarter Learning. <br />
-              Smarter Hiring.<br />
-              Powered by AI.
-            </h2>
-            <p
-              className="max-w-xl font-medium mb-10 animate-fade-up [animation-delay:300ms] text-[#6B7280] text-justify"
-              style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(1rem, 2.2vw, 1.25rem)', textAlign: 'justify' }}
-            >
-              <span style={{ color: '#000', whiteSpace: 'normal', wordBreak: 'break-word' }}>
-                Hire smarter. Learn faster. Prepare better.
-                <br />EduDiagno bridges the gap between students and recruiters with an AI-driven hiring platform that combines interviews, skill labs, and automated screening—all in one place.
-                <br />👉<Typewriter text={". Students practice, recruiters hire—all powered by AI."} speed={25} />
-              </span>
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 animate-fade-up [animation-delay:300ms]">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full md:w-auto">
+      {/* Unified Hero section (matches layout/style of following sections) */}
+      <section className="py-16 md:py-24 bg-muted/60">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
+            {/* Left: Copy */}
+            <div>
+              <h1 className="text-6xl md:text-8xl font-extrabold mb-6" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+                <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700 }}>EduDiagno</span>
+              </h1>
+              <h2 className="text-3xl md:text-5xl font-extrabold leading-tight mb-6" style={{fontFamily: 'Space Grotesk, sans-serif', background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+                Smarter Learning. Smarter Hiring. Powered by AI.
+              </h2>
+              <p className="text-muted-foreground text-base md:text-2xl max-w-xl" style={{color: 'black', fontFamily:'Space Grotesk, sans-serif'}}>
+                Hire smarter. Learn faster. Prepare better. EduDiagno bridges the gap between students and recruiters with an AI-driven hiring platform that combines interviews, skill labs, and automated screening—all in one place.
+                <br />👉 <Typewriter text={"Students practice, recruiters hire—all powered by AI."} speed={25} />
+              </p>
+              <div className="mt-10 flex flex-col sm:flex-row gap-4">
                 <Link to="/employer/signup">
-                  <Button
-                    size="lg"
-                    className="w-full sm:w-auto button-hover-effect"
-                    style={{
-                      background: 'linear-gradient(45deg, #237be7ff 0%, #da4adaff 100%)',
-                      color: '#fff',
-                      border: 'none',
-                      boxShadow: '0 2px 8px rgba(79, 142, 219, 0.15)'
-                    }}
-                  >
+                  <Button size="lg" className="button-hover-effect" style={{background: 'linear-gradient(45deg, #237be7ff 0%, #da4adaff 100%)', color:'#fff', border:'none'}}>
                     Start Hiring Smarter
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
                 <Link to="/jobseeker/signup">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="w-full sm:w-auto glass-button"
-                    style={{
-                      background: 'linear-gradient(125deg, #D18DD1 0%, #517cf3ff 40%,  #4fd2dbff 100%)',
-                      color: '#fff',
-                      border: 'none',
-                      boxShadow: '0 2px 8px rgba(209, 141, 209, 0.15)'
-                    }}
-                  >
+                  <Button size="lg" variant="outline" className="glass-button" style={{background: 'linear-gradient(125deg, #D18DD1 0%, #517cf3ff 40%,  #4fd2dbff 100%)', color:'#fff', border:'none'}}>
                     Students
                   </Button>
                 </Link>
               </div>
+            </div>
+            {/* Right: Image */}
+            <div className="relative">
+              <div className="absolute -inset-4 -z-10 bg-brand/10 blur-2xl rounded-3xl" />
+              <img
+                src="/Edudiagno Test (1).png"
+                alt="EduDiagno hero"
+                className="w-full rounded-2xl shadow-2xl object-cover aspect-[16/11] md:h-[520px] lg:h-[620px]"
+              />
             </div>
           </div>
         </div>
@@ -286,7 +372,7 @@ const Landing = () => {
             <div>
               <div className="text-6xl md:text-8xl font-extrabold mb-6 animate-fade-up [animation-delay:100ms]" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
               <h1 className="text-6xl md:text-8xl font-extrabold mb-6 animate-fade-up [animation-delay:100ms]" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
-              <span style={{fontFamily: 'Playfair Display, serif', fontWeight: 700, whiteSpace: 'normal'}}>For Recruiter</span>
+              <span style={{fontFamily: 'Playfair Display, serif', fontWeight: 700, whiteSpace: 'normal'}}>For Recruiters</span>
             </h1>
               </div>
 
@@ -354,7 +440,9 @@ const Landing = () => {
               <span style={{fontFamily: 'Playfair Display, serif', fontWeight: 700, whiteSpace: 'normal'}}>How it works ?</span>
             </h1>
             </div>
-      
+            <div>
+              <img src="/How EduDiagno Works1.png" alt="How EduDiagno Works" />
+            </div>
           <div className="max-w-lg mx-auto mt-16 text-center">
             <Link to="/how-it-works">
               <Button variant="outline" size="lg" className="glass-button">
@@ -367,11 +455,15 @@ const Landing = () => {
       </section>
 
       {/* Features section */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-20 bg-muted/60">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="h2 mb-4">Cutting-Edge Features</h2>
-            <p className="p">
+            
+           <h1 className="text-center text-6xl md:text-8xl font-extrabold mb-6 animate-fade-up [animation-delay:100ms]" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+              <span style={{fontFamily: 'Playfair Display, serif', fontWeight: 700, whiteSpace: 'normal'}}>Features</span>
+            </h1>
+
+            <p className="text-muted-foreground mt-3 text-2xl" style={{ color: '#000000' }}>
               Our platform streamlines the hiring process with powerful AI tools
               designed specifically for employers.
             </p>
@@ -440,15 +532,17 @@ const Landing = () => {
           </div>
         </div>
       </section>
-
       
+  
 
-      {/* Benefits section */}
-      <section className="py-20">
+  {/* Benefits section */}
+      <section className="py-20 bg-muted/60">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="h2 mb-4">Why Choose InterviewPro AI</h2>
-            <p className="p">
+            <h1 className="text-center text-6xl md:text-8xl font-extrabold mb-6 animate-fade-up [animation-delay:100ms]" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',lineHeight: 1.12}}>
+              <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, whiteSpace: 'normal'}}>Why choose EduDiagno AI</span>
+            </h1>
+            <p className="text-muted-foreground mt-3 text-2xl" style={{ color: '#000000' }}>
               Our platform offers unparalleled benefits for modern employers
               looking to optimize their hiring process.
             </p>
@@ -554,12 +648,29 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Testimonials: moved earlier for better narrative flow (social proof before feature deep-dive) */}
+      <div className="relative bg-gradient-to-b from-muted/70 via-white to-muted/50">
+        <Testimonials3D />
+      </div>
+
       {/* CTA section */}
-      <section className="py-20 bg-brand/5">
+      <section className="py-20 bg-brand/5 bg-muted/50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="h2 mb-6">Ready to Transform Your Hiring Process?</h2>
-            <p className="p text-lg mb-8 max-w-2xl mx-auto">
+            <h2
+              className="font-bold mb-6 animate-fade-up [animation-delay:200ms]"
+              style={{
+                fontSize: 'clamp(1.25rem, 3.5vw, 2.2rem)',
+                lineHeight: 1.08,
+                background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                fontFamily: 'Space Grotesk, sans-serif'
+              }}
+            >
+              Ready to Transform Your Hiring Process?
+            </h2>
+            <p className="p text-lg mb-8 max-w-2xl mx-auto" style={{ color: '#000000' }}>
               Join thousands of employers who are saving time, reducing costs,
               and finding better candidates with InterviewPro AI.
             </p>
