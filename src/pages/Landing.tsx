@@ -3,16 +3,8 @@ import { Link } from "react-router-dom";
 import LandingLayout from "@/components/layout/RegularLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  ArrowRight,
-  Users,
-  BarChart3,
-  Calendar,
-  Search,
-  Brain,
-  Clock,
-  CheckCircle2
-} from "lucide-react";
+// Icon components
+import { ArrowRight, CheckCircle2, Users, Brain, BarChart3, Calendar, Search, Clock } from 'lucide-react';
 
 // Small typewriter component that reveals text like a terminal insert-mode typing
 const Typewriter: React.FC<{ text: string; speed?: number; pauseBefore?: number; pauseAfter?: number; loop?: boolean; initialDelay?: number }> = ({ text, speed = 80, pauseBefore = 800, pauseAfter = 30000, loop = true, initialDelay = 5000 }) => {
@@ -20,67 +12,47 @@ const Typewriter: React.FC<{ text: string; speed?: number; pauseBefore?: number;
   const timers = React.useRef<number[]>([]);
 
   useEffect(() => {
-    // clear existing timers
     timers.current.forEach((t) => clearTimeout(t));
     timers.current = [];
-
     let cancelled = false;
-
     const startTyping = () => {
       if (cancelled) return;
       setDisplayed("");
-      const chars = Array.from(text); // iterate by unicode codepoints
+      const chars = Array.from(text);
       let i = 0;
-
       const tick = () => {
         if (cancelled) return;
         setDisplayed((prev) => prev + (chars[i] ?? ""));
         i += 1;
         if (i < chars.length) {
           timers.current.push(window.setTimeout(tick, speed));
-        } else {
-          // finished typing
-          if (loop) {
-            timers.current.push(window.setTimeout(() => {
-              if (cancelled) return;
-              setDisplayed("");
-              // small delay before restarting
-              timers.current.push(window.setTimeout(startTyping, pauseBefore));
-            }, pauseAfter));
-          }
+        } else if (loop) {
+          timers.current.push(window.setTimeout(() => {
+            if (cancelled) return;
+            setDisplayed("");
+            timers.current.push(window.setTimeout(startTyping, pauseBefore));
+          }, pauseAfter));
         }
       };
-
       timers.current.push(window.setTimeout(tick, speed));
     };
-
-    // schedule initial start only after window 'load' (or immediate if already loaded)
     const scheduleInitial = () => {
       timers.current.push(window.setTimeout(startTyping, initialDelay));
     };
-
     const onLoad = () => scheduleInitial();
-
-    if (document.readyState === 'complete') {
-      scheduleInitial();
-    } else {
-      window.addEventListener('load', onLoad);
-      // ensure listener removed on cleanup below
-      timers.current.push(window.setTimeout(() => {}, 0));
-    }
-
+    if (document.readyState === 'complete') scheduleInitial(); else window.addEventListener('load', onLoad);
     return () => {
       cancelled = true;
       window.removeEventListener('load', onLoad);
       timers.current.forEach((t) => clearTimeout(t));
       timers.current = [];
     };
-  }, [text, speed, pauseBefore, pauseAfter, loop]);
+  }, [text, speed, pauseBefore, pauseAfter, loop, initialDelay]);
 
   return (
-    <span style={{ whiteSpace: "pre-wrap", color: "inherit" }}>
+    <span style={{ whiteSpace: 'normal', color: 'inherit' }}>
       <span>{displayed}</span>
-      <span style={{ display: "inline-block", marginLeft: 6, animation: "ed-caret 1s steps(1) infinite" }}>|</span>
+      <span style={{ display: 'inline-block', marginLeft: 6, animation: 'ed-caret 1s steps(1) infinite' }}>|</span>
       <style>{`@keyframes ed-caret {50% { opacity: 0; } }`}</style>
     </span>
   );
@@ -111,6 +83,20 @@ const Testimonials3D: React.FC = () => {
   const X_STEP = 150;          // horizontal spread
   const Z_STEP = 100;          // depth difference
   const ANGLE = 15;            // tilt magnitude per side
+
+  // Responsive breakpoint state (client-side only)
+  const [isSmall, setIsSmall] = useState(false);
+  const [vw, setVw] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
+  useEffect(() => {
+    const check = () => {
+      const w = window.innerWidth;
+      setVw(w);
+      setIsSmall(w < 640);
+    };
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   useEffect(() => {
     if (paused) return;
@@ -143,10 +129,16 @@ const Testimonials3D: React.FC = () => {
     else if (e.key === 'End') setActive(n - 1);
   };
 
-  const ordered = testimonials.map((t, i) => ({ t, rel: ((i - active + n) % n) }));
+  // Compute minimal signed distance helper
+  const calcDist = (i: number) => {
+    let d = i - active; // raw difference
+    if (d > n / 2) d -= n;
+    if (d < -n / 2) d += n;
+    return d; // range roughly [-n/2, n/2]
+  };
 
   return (
-  <section className="pt-10 pb-20 bg-muted/60" aria-labelledby="testimonials-3d-heading">
+  <section className="pt-10 pb-20 " aria-labelledby="testimonials-3d-heading">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-5xl mx-auto mb-1 relative z-10">
           <h2 id="testimonials-3d-heading" className="text-6xl md:text-8xl font-extrabold mb-2 bg-gradient-to-r from-[#237be7] to-[#da4ada] bg-clip-text text-transparent leading-[1.05]">
@@ -157,7 +149,7 @@ const Testimonials3D: React.FC = () => {
 
   <div className="relative -mt-24 md:-mt-40 z-20" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
           {/* Stage */}
-          <div className="relative mx-auto w-full max-w-6xl h-[520px] md:h-[560px]" style={{ perspective: '1600px' }}>
+          <div className="relative mx-auto w-full max-w-6xl h-[480px] sm:h-[500px] md:h-[560px] overflow-visible" style={{ perspective: '1600px' }}>
             <div
               className="absolute inset-0"
               role="list"
@@ -175,68 +167,54 @@ const Testimonials3D: React.FC = () => {
               aria-live="polite"
               style={{ transformStyle: 'preserve-3d' }}
             >
-              {ordered.filter(o => {
-                // Keep items within +/- MAX_SIDE relative positions
-                const relIdx = (o.rel + n) % n; // 0..n-1
-                // Convert relIdx to signed distance (-k .. +k)
-                const dist = relIdx <= active ? relIdx - active : relIdx - active - n;
-                return Math.abs(dist) <= MAX_SIDE || relIdx === active;
-              }).map(({ t, rel }) => {
-                // Compute signed distance from active
-                let dist = ( (rel - active + n) % n );
-                // Normalize to signed range
-                if (dist > n/2) dist = dist - n;
+              {testimonials.map((t, i) => {
+                const dist = calcDist(i);
+                if (Math.abs(dist) > MAX_SIDE) return null;
                 const isFront = dist === 0;
-                const isNext = dist === 1; // upcoming card (second card)
+                const isNext = dist === 1;
                 const abs = Math.abs(dist);
-                const x = dist * X_STEP;
-                const z = -abs * Z_STEP;
-                const rotateY = dist * -ANGLE; // mirror tilt
+                const cardW = isSmall ? 260 : (vw >= 1024 ? 560 : 380);
+                const sideMargin = 16;
+                const maxX = Math.max(40, (vw - cardW - sideMargin * 2) / 2);
+                const baseStep = isSmall ? 90 : X_STEP;
+                const xStep = Math.min(baseStep, maxX);
+                let x = dist * xStep;
+                if (x > maxX) x = maxX; if (x < -maxX) x = -maxX;
+                const zStep = isSmall ? 80 : Z_STEP;
+                const z = -abs * zStep;
+                const rotateY = dist * -ANGLE;
                 const scale = 1 - abs * 0.07;
                 const opacity = 1 - abs * 0.22;
                 return (
                   <figure
-                    key={t.name + dist}
+                    key={t.name}
                     role="listitem"
                     aria-label={`${t.name} from ${t.country}`}
-                    className={`absolute left-1/2 top-1/2 -translate-x-[70%] -translate-y-[78%] rounded-3xl bg-white/95 shadow-xl border border-white/40 flex flex-col p-8 md:p-10 w-[460px] md:w-[560px] h-[400px] md:h-[460px] transition-all duration-600 ease-[cubic-bezier(.22,.84,.32,1)] ${isFront ? 'ring-2 ring-brand/40 shadow-2xl' : 'hover:shadow-2xl'} cursor-pointer`}
+                    className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:-translate-x-[70%] md:-translate-y-[78%] rounded-3xl bg-white/95 shadow-xl border border-white/40 flex flex-col p-4 sm:p-6 md:p-10 w-[260px] h-[340px] sm:w-[380px] sm:h-[400px] md:w-[560px] md:h-[460px] transition-all duration-600 ease-[cubic-bezier(.22,.84,.32,.1)] ${isFront ? 'ring-2 ring-brand/40 shadow-2xl' : 'hover:shadow-2xl'} cursor-pointer`}
                     style={{
-                      transform: `translate3d(${x}px, 0, ${z}px) rotateY(${rotateY}deg) scale(${scale})`,
+                      transform: `translate3d(${x - 135}px, 0, ${z}px) rotateY(${rotateY}deg) scale(${scale})`,
                       opacity,
                       zIndex: 100 - abs,
                       willChange: 'transform'
                     }}
-                    onClick={() => { if(!isFront){ setActive(tIdx => testimonials.findIndex(tt => tt.name === t.name)); } }}
+                    onClick={() => { if(!isFront){ setActive(i); } }}
                   >
-                    {isNext && (
-                      <span className="absolute -top-3 left-6 select-none text-[10px] font-semibold tracking-wide bg-gradient-to-r from-brand/80 to-pink-500/80 text-white px-3 py-1 rounded-full shadow-sm backdrop-blur-sm border border-white/30">
-                        NEXT
-                      </span>
-                    )}
-                    <div className="flex items-center gap-6">
-                      <img src={t.img} alt="" aria-hidden className="w-20 h-20 md:w-25 md:h-25 rounded-full object-cover shadow-md" />
+              
+                    <div className="flex items-center gap-4 sm:gap-6">
+                      <img src={t.img} alt="" aria-hidden className="w-16 h-16 sm:w-20 sm:h-20 md:w-25 md:h-25 rounded-full object-cover shadow-md" />
                       <div>
-                        <h3 className="text-xl md:text-2xl font-semibold leading-snug">{t.name}</h3>
-                        <span className="text-[20px] tracking-wide uppercase text-muted-foreground">{t.country}</span>
+                        <h3 className="text-lg sm:text-xl md:text-2xl font-semibold leading-snug">{t.name}</h3>
+                        <span className="text-sm sm:text-base md:text-[20px] tracking-wide uppercase text-muted-foreground">{t.country}</span>
                       </div>
                     </div>
-                    <blockquote className="mt-5 text-sm md:text-[18px] text-gray-700 leading-relaxed line-clamp-8">“{t.quote}”</blockquote>
+                    <blockquote className="mt-4 sm:mt-5 text-xs sm:text-sm md:text-[18px] text-gray-700 leading-relaxed line-clamp-7 sm:line-clamp-8">“{t.quote}”</blockquote>
                   </figure>
                 );
               })}
             </div>
           </div>
-
           <p className="mt-6 text-center text-xs text-muted-foreground">Drag / swipe or use Arrow keys • Auto rotates</p>
         </div>
-
-        <style>{`
-          @media (max-width: 640px){
-            /* Mobile fallback: flatten stack */
-            [aria-label='Testimonials Aero Flip stack'] figure { transform: none !important; position: relative !important; left:0; top:0; margin: 1rem auto; }
-            [aria-label='Testimonials Aero Flip stack'] { height: auto !important; }
-          }
-        `}</style>
       </div>
     </section>
   );
@@ -245,21 +223,35 @@ const Testimonials3D: React.FC = () => {
 const Landing = () => {
   return (
     <LandingLayout>
+      {/* Background infinity loop video (restored) */}
+      <div className="fixed inset-0 w-screen h-screen -z-10 overflow-hidden">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          src="/InfinityLoopVideo.mp4"
+          className="absolute inset-0 w-full h-full object-cover m-0 p-0 border-none"
+        />
+        {/* Optional subtle overlay for readability */}
+        {/* <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px]" /> */}
+      </div>
       {/* Unified Hero section (matches layout/style of following sections) */}
       <section className="py-16 md:py-24 bg-muted/60">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left: Copy */}
             <div>
-              <h1 className="text-6xl md:text-8xl font-extrabold mb-6" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+              <h1 className="text-6xl md:text-8xl font-extrabold mb-6" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1.12}}>
                 <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700 }}>EduDiagno</span>
               </h1>
-              <h2 className="text-3xl md:text-5xl font-extrabold leading-tight mb-6" style={{fontFamily: 'Space Grotesk, sans-serif', background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
-                Smarter Learning. Smarter Hiring. Powered by AI.
+              <h2 className="text-3xl md:text-5xl font-extrabold leading-tight mb-6" style={{ background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+                Smarter Learning. <br /> Smarter Hiring. <br /> Powered by AI.
               </h2>
-              <p className="text-muted-foreground text-base md:text-2xl max-w-xl" style={{color: 'black', fontFamily:'Space Grotesk, sans-serif'}}>
+              <p className="text-muted-foreground text-base md:text-2xl max-w-xl" style={{color: 'black'}}>
                 Hire smarter. Learn faster. Prepare better. EduDiagno bridges the gap between students and recruiters with an AI-driven hiring platform that combines interviews, skill labs, and automated screening—all in one place.
-                <br />👉 <Typewriter text={"Students practice, recruiters hire—all powered by AI."} speed={25} />
+                <br /> <br />
+                👉 <Typewriter text={"Students practice, recruiters hire—all powered by AI."} speed={20} /><br />
               </p>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
                 <Link to="/employer/signup">
@@ -270,7 +262,8 @@ const Landing = () => {
                 </Link>
                 <Link to="/jobseeker/signup">
                   <Button size="lg" variant="outline" className="glass-button" style={{background: 'linear-gradient(125deg, #D18DD1 0%, #517cf3ff 40%,  #4fd2dbff 100%)', color:'#fff', border:'none'}}>
-                    Students
+                    Students Login
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
               </div>
@@ -279,7 +272,7 @@ const Landing = () => {
             <div className="relative">
               <div className="absolute -inset-4 -z-10 bg-brand/10 blur-2xl rounded-3xl" />
               <img
-                src="/Edudiagno Test (1).png"
+                src="/EdudiagnoTest.jpg"
                 alt="EduDiagno hero"
                 className="w-full rounded-2xl shadow-2xl object-cover aspect-[16/11] md:h-[520px] lg:h-[620px]"
               />
@@ -358,8 +351,8 @@ const Landing = () => {
       <section className="py-16 md:py-24 bg-muted/60">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left: Image */}
-            <div className="relative">
+            {/* Left (desktop) / Bottom (mobile): Image */}
+            <div className="relative order-2 md:order-1">
               <div className="absolute -inset-4 -z-10 bg-brand/10 blur-2xl rounded-3xl" />
               <img
                 src="/top-candidatess.png"
@@ -368,8 +361,8 @@ const Landing = () => {
               />
             </div>
 
-            {/* Right: Copy */}
-            <div>
+            {/* Right (desktop) / Top (mobile): Copy */}
+            <div className="order-1 md:order-2">
               <div className="text-6xl md:text-8xl font-extrabold mb-6 animate-fade-up [animation-delay:100ms]" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
               <h1 className="text-6xl md:text-8xl font-extrabold mb-6 animate-fade-up [animation-delay:100ms]" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
               <span style={{fontFamily: 'Playfair Display, serif', fontWeight: 700, whiteSpace: 'normal'}}>For Recruiters</span>
