@@ -4,7 +4,7 @@ import LandingLayout from "@/components/layout/RegularLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 // Icon components
-import { ArrowRight, CheckCircle2, Users, Brain, BarChart3, Calendar, Search, Clock } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Users, Brain, BarChart3, Calendar, Search, Clock, GraduationCap } from 'lucide-react';
 
 // Small typewriter component that reveals text like a terminal insert-mode typing
 const Typewriter: React.FC<{ text: string; speed?: number; pauseBefore?: number; pauseAfter?: number; loop?: boolean; initialDelay?: number }> = ({ text, speed = 80, pauseBefore = 800, pauseAfter = 30000, loop = true, initialDelay = 5000 }) => {
@@ -207,7 +207,7 @@ const Testimonials3D: React.FC = () => {
                         <span className="text-sm sm:text-base md:text-[20px] tracking-wide uppercase text-muted-foreground">{t.country}</span>
                       </div>
                     </div>
-                    <blockquote className="mt-4 sm:mt-5 text-xs sm:text-sm md:text-[18px] text-gray-700 leading-relaxed line-clamp-7 sm:line-clamp-8">“{t.quote}”</blockquote>
+                    <blockquote className="mt-4 sm:mt-5 text-xs sm:text-sm md:text-[18px] text-gray-700 leading-relaxed line-clamp-10 sm:line-clamp-8">“{t.quote}”</blockquote>
                   </figure>
                 );
               })}
@@ -223,59 +223,45 @@ const Testimonials3D: React.FC = () => {
 const Landing = () => {
   return (
     <LandingLayout>
-      {/* Background infinity loop video (restored) */}
-      <div className="fixed inset-0 w-screen h-screen -z-10 overflow-hidden">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          src="/InfinityLoopVideo.mp4"
-          className="absolute inset-0 w-full h-full object-cover m-0 p-0 border-none"
-        />
-        {/* Optional subtle overlay for readability */}
-        {/* <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px]" /> */}
-      </div>
-      {/* Unified Hero section (matches layout/style of following sections) */}
-      <section className="py-16 md:py-24 bg-muted/60">
+      {/* Centered Hero Section */}
+      <section className="py-24 bg-muted/60">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left: Copy */}
-            <div>
-              <h1 className="text-6xl md:text-8xl font-extrabold mb-6" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1.12}}>
-                <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700 }}>EduDiagno</span>
-              </h1>
-              <h2 className="text-3xl md:text-5xl font-extrabold leading-tight mb-6" style={{ background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
-                Smarter Learning. <br /> Smarter Hiring. <br /> Powered by AI.
-              </h2>
-              <p className="text-muted-foreground text-base md:text-2xl max-w-xl" style={{color: 'black'}}>
-                Hire smarter. Learn faster. Prepare better. EduDiagno bridges the gap between students and recruiters with an AI-driven hiring platform that combines interviews, skill labs, and automated screening—all in one place.
-                <br /> <br />
-                👉 <Typewriter text={"Students practice, recruiters hire—all powered by AI."} speed={20} /><br />
+          <div className="flex flex-col items-center text-center gap-10 max-w-5xl mx-auto">
+            <div className="inline-flex items-center gap-3 px-8 py-3 rounded-full bg-neutral-900 text-white shadow-md ring-1 ring-white/10">
+              <GraduationCap className="h-10 w-10 md:h-24 md:w-24" />
+              <span className="text-4xl md:text-8xl tracking-wide font-semibold ">EduDiagno</span>
+            </div>
+            <div className="space-y-2">
+              <div className="text-3xl md:text-5xl font-semibold text-neutral-800 leading-tight" style={{fontFamily:'Space Grotesk, sans-serif'}}>
+                <p>Smarter Learning.</p>
+                <p>Smarter Hiring.</p>
+                <p className="bg-gradient-to-r from-[#237be7] to-[#da4ada] bg-clip-text text-transparent font-extrabold">Powered by AI.</p>
+              </div>
+              <p className="max-w-3xl mx-auto text-neutral-700 md:text-lg leading-relaxed">
+                Hire smarter. Learn faster. Prepare better. Unified AI interviews, assessments & automated screening—everything in one place.
               </p>
-              <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                <Link to="/employer/signup">
-                  <Button size="lg" className="button-hover-effect" style={{background: 'linear-gradient(45deg, #237be7ff 0%, #da4adaff 100%)', color:'#fff', border:'none'}}>
-                    Start Hiring Smarter
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link to="/jobseeker/signup">
-                  <Button size="lg" variant="outline" className="glass-button" style={{background: 'linear-gradient(125deg, #D18DD1 0%, #517cf3ff 40%,  #4fd2dbff 100%)', color:'#fff', border:'none'}}>
-                    Students Login
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
+            </div>
+            <div className="w-full flex items-center justify-center">
+              <div className="relative w-full max-w-4xl aspect-[16/10] rounded-[2.2rem] p-4 md:p-6 bg-neutral-900 shadow-2xl ring-1 ring-black/40">
+                <div className="absolute -top-2 left-1/2 -translate-x-1/2 h-1.5 w-24 rounded-full bg-neutral-800" />
+                <div className="relative w-full h-full overflow-hidden rounded-2xl bg-neutral-950 border border-white/10">
+                  <img src="/Edudiagno Test (1).png" alt="Platform preview" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 rounded-2xl ring-1 ring-white/10 pointer-events-none" />
+                </div>
               </div>
             </div>
-            {/* Right: Image */}
-            <div className="relative">
-              <div className="absolute -inset-4 -z-10 bg-brand/10 blur-2xl rounded-3xl" />
-              <img
-                src="/EdudiagnoTest.jpg"
-                alt="EduDiagno hero"
-                className="w-full rounded-2xl shadow-2xl object-cover aspect-[16/11] md:h-[520px] lg:h-[620px]"
-              />
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+              <Link to="/employer/signup">
+                <Button size="lg" className="button-hover-effect" style={{background:'linear-gradient(45deg,#237be7 0%,#da4ada 100%)',color:'#fff',border:'none'}}>
+                  Start Hiring Smarter
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link to="/jobseeker/signup">
+                <Button size="lg" variant="outline" className="glass-button" style={{background:'linear-gradient(125deg,#D18DD1 0%,#517cf3 40%,#4fd2db 100%)',color:'#fff',border:'none'}}>
+                  Students
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
