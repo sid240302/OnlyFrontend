@@ -51,14 +51,26 @@ const RegularLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             </nav>
           </div>
           <div className="flex items-center gap-4">
-            {/* <ThemeToggle /> */}
+            <ThemeToggle />
             <div className="hidden md:flex items-center gap-4">
-              <Link to="/jobseeker/login">
-                <Button variant="ghost">Log in</Button>
-              </Link>
-              <Link to="/jobseeker/signup">
-                <Button>Sign up</Button>
-              </Link>
+              {/* Students dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-1">
+                    Students
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link to="/jobseeker/login">Student Login</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/jobseeker/signup">Student Signup</Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              {/* Employer dropdown (existing) */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="flex items-center gap-1">
@@ -100,16 +112,7 @@ const RegularLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                     </DropdownMenuItem>
                   ))}
                 </nav>
-                <div className="flex flex-col gap-2">
-                  <Link to="/jobseeker/login" className="w-full">
-                    <Button variant="outline" className="w-full">
-                      Log in
-                    </Button>
-                  </Link>
-                  <Link to="/jobseeker/signup" className="w-full">
-                    <Button className="w-full">Sign up</Button>
-                  </Link>
-                </div>
+                {/* Moved student auth to dedicated Students dropdown for mobile below */}
               </DropdownMenuContent>
             </DropdownMenu>
             <DropdownMenu>
@@ -122,6 +125,19 @@ const RegularLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/employer/signup">Employer Signup</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild className="md:hidden">
+                <Button variant="outline">Students <ChevronDown/></Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link to="/jobseeker/login">Student Login</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/jobseeker/signup">Student Signup</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
