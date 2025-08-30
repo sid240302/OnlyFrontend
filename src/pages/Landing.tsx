@@ -139,10 +139,11 @@ const Testimonials3D: React.FC = () => {
 
   return (
   <section className="pt-10 pb-20 " aria-labelledby="testimonials-3d-heading">
+      <style>{`.custom-ease{transition-timing-function:var(--tw-ease)}`}</style>
       <div className="container mx-auto px-4">
         <div className="text-center max-w-5xl mx-auto mb-1 relative z-10">
           <h2 id="testimonials-3d-heading" className="text-6xl md:text-8xl font-extrabold mb-2 bg-gradient-to-r from-[#237be7] to-[#da4ada] bg-clip-text text-transparent leading-[1.05]">
-            <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700 }}>What Our Students & Recruiters Say</span>
+            <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, lineHeight: 1.3 }}>What Our Students & Recruiters Say</span>
           </h2>
           <p className="text-xl md:text-2xl text-black">Real stories from students and recruiters using EduDiagno.</p>
         </div>
@@ -174,7 +175,7 @@ const Testimonials3D: React.FC = () => {
                 const isNext = dist === 1;
                 const abs = Math.abs(dist);
                 const cardW = isSmall ? 260 : (vw >= 1024 ? 560 : 380);
-                const sideMargin = 16;
+                const sideMargin = 10;
                 const maxX = Math.max(40, (vw - cardW - sideMargin * 2) / 2);
                 const baseStep = isSmall ? 90 : X_STEP;
                 const xStep = Math.min(baseStep, maxX);
@@ -190,13 +191,13 @@ const Testimonials3D: React.FC = () => {
                     key={t.name}
                     role="listitem"
                     aria-label={`${t.name} from ${t.country}`}
-                    className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:-translate-x-[70%] md:-translate-y-[78%] rounded-3xl bg-white/95 shadow-xl border border-white/40 flex flex-col p-4 sm:p-6 md:p-10 w-[260px] h-[340px] sm:w-[380px] sm:h-[400px] md:w-[560px] md:h-[460px] transition-all duration-600 ease-[cubic-bezier(.22,.84,.32,.1)] ${isFront ? 'ring-2 ring-brand/40 shadow-2xl' : 'hover:shadow-2xl'} cursor-pointer`}
+                    className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:-translate-x-[70%] md:-translate-y-[78%] rounded-3xl bg-white/95 shadow-xl border border-white/40 flex flex-col p-4 sm:p-6 md:p-10 w-[260px] h-[340px] sm:w-[380px] sm:h-[400px] md:w-[560px] md:h-[350px] transition-all duration-600 custom-ease ${isFront ? 'ring-2 ring-brand/40 shadow-2xl' : 'hover:shadow-2xl'} cursor-pointer`}
                     style={{
-                      transform: `translate3d(${x - 135}px, 0, ${z}px) rotateY(${rotateY}deg) scale(${scale})`,
-                      opacity,
+                      transform: `translate3d(${x - (vw >= 1024 ? 270 : 130)}px, 0, ${z}px) rotateY(${rotateY}deg) scale(${scale})`,
+                      opacity: 1,
                       zIndex: 100 - abs,
                       willChange: 'transform'
-                    }}
+                    } as any}
                     onClick={() => { if(!isFront){ setActive(i); } }}
                   >
               
@@ -223,43 +224,55 @@ const Testimonials3D: React.FC = () => {
 const Landing = () => {
   return (
     <LandingLayout>
+      {/* Background infinity loop video (restored) */}
+      <div className="fixed inset-0 w-screen h-screen -z-10 overflow-hidden">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          src="/InfinityLoopVideo.mp4"
+          className="absolute inset-0 w-full h-full object-cover m-0 p-0 border-none"
+        />
+      </div>
       {/* Centered Hero Section */}
-      <section className="py-24 bg-muted/60">
+      <section className="py-5 bg-muted/60">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center text-center gap-10 max-w-5xl mx-auto">
-            <div className="inline-flex items-center gap-3 px-8 py-3 rounded-full bg-neutral-900 text-white shadow-md ring-1 ring-white/10">
+            <div className="inline-flex items-center gap-3 px-8 py-3 rounded-full bg-gradient-to-r from-[#237be7] to-[#da4ada] text-white shadow-md ring-1 ring-white/10">
               <GraduationCap className="h-10 w-10 md:h-24 md:w-24" />
-              <span className="text-4xl md:text-8xl tracking-wide font-semibold ">EduDiagno</span>
+              <span className="text-4xl md:text-8xl tracking-wide font-semibold " style={{fontFamily: 'Playfair Display, serif'}}>EduDiagno</span>
             </div>
             <div className="space-y-2">
-              <div className="text-3xl md:text-5xl font-semibold text-neutral-800 leading-tight" style={{fontFamily:'Space Grotesk, sans-serif'}}>
+              <div className="text-3xl md:text-5xl font-semibold text-neutral-800 leading-tight" style={{fontFamily:'Space Grotesk, sans-serif', lineHeight: 1.08}}>
                 <p>Smarter Learning.</p>
                 <p>Smarter Hiring.</p>
                 <p className="bg-gradient-to-r from-[#237be7] to-[#da4ada] bg-clip-text text-transparent font-extrabold">Powered by AI.</p>
               </div>
               <p className="max-w-3xl mx-auto text-neutral-700 md:text-lg leading-relaxed">
-                Hire smarter. Learn faster. Prepare better. Unified AI interviews, assessments & automated screening—everything in one place.
+                <strong>Hire smarter. Learn faster. Prepare better.</strong> Unified AI interviews, assessments & automated screening—everything in one place.
               </p>
             </div>
             <div className="w-full flex items-center justify-center">
               <div className="relative w-full max-w-4xl aspect-[16/10] rounded-[2.2rem] p-4 md:p-6 bg-neutral-900 shadow-2xl ring-1 ring-black/40">
                 <div className="absolute -top-2 left-1/2 -translate-x-1/2 h-1.5 w-24 rounded-full bg-neutral-800" />
                 <div className="relative w-full h-full overflow-hidden rounded-2xl bg-neutral-950 border border-white/10">
-                  <img src="/Edudiagno Test (1).png" alt="Platform preview" className="w-full h-full object-cover" />
+                  <img src="/EduDiagno Test (2).png" alt="Platform preview" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 rounded-2xl ring-1 ring-white/10 pointer-events-none" />
                 </div>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <Link to="/employer/signup">
-                <Button size="lg" className="button-hover-effect" style={{background:'linear-gradient(45deg,#237be7 0%,#da4ada 100%)',color:'#fff',border:'none'}}>
+                <Button size="lg" className="button-hover-effect text-xl" style={{background:'linear-gradient(45deg, #237be7 0%, #da4ada 100%)',color:'#fff',border:'none'}}>
                   Start Hiring Smarter
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
               <Link to="/jobseeker/signup">
-                <Button size="lg" variant="outline" className="glass-button" style={{background:'linear-gradient(125deg,#D18DD1 0%,#517cf3 40%,#4fd2db 100%)',color:'#fff',border:'none'}}>
-                  Students
+                <Button size="lg" variant="outline" className="glass-button text-xl" style={{background:'linear-gradient(125deg, #f337f3ff 10%, #436ee6ff 40%,  #4fd2db 100%)',color:'#fff',border:'none'}}>
+                  Students Login
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
             </div>
@@ -268,7 +281,7 @@ const Landing = () => {
       </section>
 
       {/* NEW: For Students section */}
-      <section className="py-16 md:py-24 bg-muted/60">
+      <section className="py-5 md:py-5 bg-muted/60">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left: Copy */}
@@ -334,7 +347,7 @@ const Landing = () => {
       </section>
 
       {/* NEW: Top Candidates Section (image left, copy right) */}
-      <section className="py-16 md:py-24 bg-muted/60">
+      <section className="py-5 md:py-5 bg-muted/60">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left (desktop) / Bottom (mobile): Image */}
@@ -343,14 +356,14 @@ const Landing = () => {
               <img
                 src="/top-candidatess.png"
                 alt="Smiling manager holding tablet"
-                className="w-full rounded-2xl shadow-2xl object-cover aspect-[16/10] md:h-[480px] lg:h-[600px]"
+                className="w-full rounded-2xl shadow-2xl object-cover aspect-[16/13] md:h-[480px] lg:h-[600px]"
               />
             </div>
 
             {/* Right (desktop) / Top (mobile): Copy */}
             <div className="order-1 md:order-2">
               <div className="text-6xl md:text-8xl font-extrabold mb-6 animate-fade-up [animation-delay:100ms]" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
-              <h1 className="text-6xl md:text-8xl font-extrabold mb-6 animate-fade-up [animation-delay:100ms]" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+              <h1>
               <span style={{fontFamily: 'Playfair Display, serif', fontWeight: 700, whiteSpace: 'normal'}}>For Recruiters</span>
             </h1>
               </div>
@@ -412,7 +425,7 @@ const Landing = () => {
       </section>
 
 {/* How it works section */}
-      <section className="py-20 bg-muted/60">
+      <section className="py-5 bg-muted/60">
         <div className="container mx-auto px-4">
            <div>
            <h1 className="text-center text-6xl md:text-8xl font-extrabold mb-6 animate-fade-up [animation-delay:100ms]" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
@@ -424,7 +437,7 @@ const Landing = () => {
             </div>
           <div className="max-w-lg mx-auto mt-16 text-center">
             <Link to="/how-it-works">
-              <Button variant="outline" size="lg" className="glass-button">
+              <Button variant="outline" size="lg" className="glass-button text-xl ">
                 Learn more about the process
                 <ArrowRight className="ml-2 h-5 w-8" />
               </Button>
@@ -434,7 +447,7 @@ const Landing = () => {
       </section>
 
       {/* Features section */}
-      <section className="py-20 bg-muted/60">
+      <section className="py-5 bg-muted/60">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
             
@@ -515,7 +528,7 @@ const Landing = () => {
   
 
   {/* Benefits section */}
-      <section className="py-20 bg-muted/60">
+      <section className="py-5 bg-muted/60">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h1 className="text-center text-6xl md:text-8xl font-extrabold mb-6 animate-fade-up [animation-delay:100ms]" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',lineHeight: 1.12}}>
@@ -531,7 +544,8 @@ const Landing = () => {
             {/* Left column */}
             <div className="space-y-8">
               {/* Benefit 1 */}
-              <div className="flex gap-4">
+              <div className="relative flex gap-4 p-4 rounded-xl bg-white shadow-sm hover:shadow-md ring-1 ring-gray-200 transition group">
+                {/* Removed translucent overlay for solid white card */}
                 <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand">
                   <Clock className="h-6 w-6" />
                 </div>
@@ -545,7 +559,8 @@ const Landing = () => {
               </div>
 
               {/* Benefit 2 */}
-              <div className="flex gap-4">
+              <div className="relative flex gap-4 p-4 rounded-xl bg-white shadow-sm hover:shadow-md ring-1 ring-gray-200 transition group">
+                {/* Removed translucent overlay for solid white card */}
                 <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand">
                   <Users className="h-6 w-6" />
                 </div>
@@ -559,7 +574,8 @@ const Landing = () => {
               </div>
 
               {/* Benefit 3 */}
-              <div className="flex gap-4">
+              <div className="relative flex gap-4 p-4 rounded-xl bg-white shadow-sm hover:shadow-md ring-1 ring-gray-200 transition group">
+                {/* Removed gradient overlay for solid white card */}
                 <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand">
                   <BarChart3 className="h-6 w-6" />
                 </div>
@@ -578,7 +594,8 @@ const Landing = () => {
             {/* Right column */}
             <div className="space-y-8">
               {/* Benefit 4 */}
-              <div className="flex gap-4">
+              <div className="relative flex gap-4 p-4 rounded-xl bg-white shadow-sm hover:shadow-md ring-1 ring-gray-200 transition group">
+                {/* Removed gradient overlay for solid white card */}
                 <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand">
                   <Brain className="h-6 w-6" />
                 </div>
@@ -592,7 +609,8 @@ const Landing = () => {
               </div>
 
               {/* Benefit 5 */}
-              <div className="flex gap-4">
+              <div className="relative flex gap-4 p-4 rounded-xl bg-white shadow-sm hover:shadow-md ring-1 ring-gray-200 transition group">
+                {/* Removed gradient overlay for solid white card */}
                 <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand">
                   <Calendar className="h-6 w-6" />
                 </div>
@@ -608,7 +626,8 @@ const Landing = () => {
               </div>
 
               {/* Benefit 6 */}
-              <div className="flex gap-4">
+              <div className="relative flex gap-4 p-4 rounded-xl bg-white shadow-sm hover:shadow-md ring-1 ring-gray-200 transition group">
+                {/* Removed gradient overlay for solid white card */}
                 <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand">
                   <Search className="h-6 w-6" />
                 </div>
