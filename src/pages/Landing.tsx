@@ -283,7 +283,7 @@ const Landing = () => {
       {/* NEW: For Students section */}
       <section className="py-5 md:py-5 bg-muted/60">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
+          <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-start md:items-start">
             {/* Left: Copy */}
             <div>
               <div className="text-6xl md:text-8xl font-extrabold mb-6 animate-fade-up [animation-delay:100ms]" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
@@ -349,7 +349,7 @@ const Landing = () => {
       {/* NEW: Top Candidates Section (image left, copy right) */}
       <section className="py-5 md:py-5 bg-muted/60">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
+          <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-start md:items-start">
             {/* Left (desktop) / Bottom (mobile): Image */}
             <div className="relative order-2 md:order-1">
               <div className="absolute -inset-4 -z-10 bg-brand/10 blur-2xl rounded-3xl" />
@@ -364,8 +364,8 @@ const Landing = () => {
             <div className="order-1 md:order-2">
               <div className="text-6xl md:text-8xl font-extrabold mb-6 animate-fade-up [animation-delay:100ms]" style={{background: 'linear-gradient(90deg, #237be7ff 0%, #da4adaff 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
               <h1>
-              <span style={{fontFamily: 'Playfair Display, serif', fontWeight: 700, whiteSpace: 'normal'}}>For Recruiters</span>
-            </h1>
+                <span style={{fontFamily: 'Playfair Display, serif', fontWeight: 700, whiteSpace: 'normal'}}>For Recruiters</span>
+              </h1>
               </div>
 
               <h2 className="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
